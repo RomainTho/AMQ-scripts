@@ -1,8 +1,9 @@
 // ==UserScript==
-// @name         AMQ Low Accuracy Songs Adder
+// @name         AMQ Low Accuracy Songs Tracker
 // @namespace    https://github.com/RomainTho/AMQ-scripts
 // @version      1.0
 // @description  Automatically manages low accuracy songs in local storage based on accuracy thresholds.
+// @author       RomainTho
 // @match        https://animemusicquiz.com/*
 // @grant        none
 // @require      https://github.com/joske2865/AMQ-Scripts/raw/master/common/amqScriptInfo.js

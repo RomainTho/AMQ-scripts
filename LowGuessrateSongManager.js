@@ -5,7 +5,7 @@
 // @description  Manage low Accuracy songs by number with a simple interface.
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqWindows.js
-// @author       Mxyuki
+// @author       RomainTho
 // @match        https://animemusicquiz.com/*
 // @grant        GM_setValue
 // @grant        GM_getValue
