@@ -1,9 +1,10 @@
 // ==UserScript==
-// @name         AMQ Low GuessRate Songs Tracker
+// @name         AMQ Low Accuracy Songs Tracker
 // @namespace    https://github.com/RomainTho/AMQ-scripts
-// @version      1.2
-// @description  Automatically manages low GuessRate songs in local storage based on GuessRate thresholds.
+// @version      1.0
+// @description  Automatically manages low accuracy songs in local storage based on accuracy thresholds.
 // @match        https://animemusicquiz.com/*
+// @grant        none
 // @require      https://github.com/joske2865/AMQ-Scripts/raw/master/common/amqScriptInfo.js
 // @require      https://github.com/Mxyuki/AMQ-Scripts/raw/master/common/amqWindows.js
 // ==/UserScript==
@@ -13,20 +14,18 @@ if (window.quiz) {
 }
 
 function setup() {
-    if (!localStorage.getItem('lowGuessRateSongs')) {
-        localStorage.setItem('lowGuessRateSongs', JSON.stringify([]));
+    if (!localStorage.getItem('lowAccuracySongs')) {
+        localStorage.setItem('lowAccuracySongs', JSON.stringify([]));
     }
 
     const l = new Listener("answer results");
     l.callback = async (data) => {
-        // Use a unique identifier if available
-        const webm = data.songInfo.videoTargetMap?.catbox?.[720]?.slice(0, 6) ??
-                     data.songInfo.videoTargetMap?.catbox?.[480]?.slice(0, 6) ??
-                     data.songInfo.uniqueID; // Fallback to unique ID if available
+        const webm = data.songInfo.videoTargetMap?.catbox?.[720]?.slice(0, 6) ?? data.songInfo.videoTargetMap?.catbox?.[480]?.slice(0, 6);
         if (!webm) return;
 
         const songHistory = JSON.parse(localStorage.getItem('songHistory')) || {};
         const current = songHistory[webm] ?? { count: 0, correctCount: 0, spectatorCount: 0, lastPlayed: 0 };
+
 
         let isCorrect;
         if (quiz.gameMode === "Nexus") {
@@ -44,7 +43,7 @@ function setup() {
         };
         localStorage.setItem('songHistory', JSON.stringify(songHistory));
 
-        // Calculate the GuessRate ratio
+        // Calculate the accuracy ratio
         let validPlayCount = current.count - current.spectatorCount;
         let correctRatio = validPlayCount > 0 ? (current.correctCount / validPlayCount) * 100 : 100;
 
@@ -54,35 +53,36 @@ function setup() {
                 let animeName = document.querySelector('#qpAnimeName')?.textContent.trim();
 
                 if (songName && animeName) {
-                    let lowGuessRateSongs = JSON.parse(localStorage.getItem('lowGuessRateSongs')) || [];
+                    let lowAccuracySongs = JSON.parse(localStorage.getItem('lowAccuracySongs')) || [];
 
                     // Check if the song is already in the list
-                    const songIndex = lowGuessRateSongs.findIndex(song => song.webm === webm);
+                    const songIndex = lowAccuracySongs.findIndex(song => song.songName === songName && song.animeName === animeName);
 
                     if (songIndex === -1) {
                         // Add new song if not already present
-                        lowGuessRateSongs.push({
+                        lowAccuracySongs.push({
                             songName,
                             animeName,
                             playCount: current.count,
-                            correctCount: current.correctCount,
-                            webm // Store the unique identifier
+                            correctCount: current.correctCount
                         });
-                        localStorage.setItem('lowGuessRateSongs', JSON.stringify(lowGuessRateSongs));
-                        gameChat.systemMessage("Low GuessRate song added: " + songName + " - " + animeName + " (" + current.correctCount + "/" + validPlayCount + ")");
+                        localStorage.setItem('lowAccuracySongs', JSON.stringify(lowAccuracySongs));
+                        gameChat.systemMessage("Low accuracy song added: " + songName + " - " + animeName + " (" + current.correctCount + "/" + validPlayCount + ")");
                     }
                 }
             }, 1000); // Wait 1 second
         } else if (correctRatio > 33.33 && validPlayCount >= 3) {
-            // Remove song if GuessRate improves above threshold
-            let lowGuessRateSongs = JSON.parse(localStorage.getItem('lowGuessRateSongs')) || [];
+            // Remove song if accuracy improves above threshold
+            let lowAccuracySongs = JSON.parse(localStorage.getItem('lowAccuracySongs')) || [];
+            let songName = document.querySelector('#qpSongName')?.textContent.trim();
+            let animeName = document.querySelector('#qpAnimeName')?.textContent.trim();
 
             if (songName && animeName) {
-                const songIndex = lowGuessRateSongs.findIndex(song => song.webm === webm);
+                const songIndex = lowAccuracySongs.findIndex(song => song.songName === songName && song.animeName === animeName);
                 if (songIndex !== -1) {
-                    lowGuessRateSongs.splice(songIndex, 1);
-                    localStorage.setItem('lowGuessRateSongs', JSON.stringify(lowGuessRateSongs));
-                    gameChat.systemMessage("Low GuessRate song removed due to improved GuessRate: " + songName + " - " + animeName);
+                    lowAccuracySongs.splice(songIndex, 1);
+                    localStorage.setItem('lowAccuracySongs', JSON.stringify(lowAccuracySongs));
+                    gameChat.systemMessage("Low accuracy song removed due to improved accuracy: " + songName + " - " + animeName);
                 }
             }
         }
