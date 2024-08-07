@@ -36,7 +36,7 @@ function setup() {
         } else {
             isCorrect = quiz.isSpectator ? false : data.players.find(player => player.gamePlayerId === quiz.ownGamePlayerId)?.correct;
         }
-        current.correctCount += isCorrect;
+        current.correctCount = isCorrect;
         current.spectatorCount += quiz.isSpectator;
         songHistory[webm] = {
             count: current.count,
