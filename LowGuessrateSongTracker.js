@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         AMQ Low Accuracy Songs Tracker
+// @name         AMQ Low Guess Rate Songs Tracker
 // @namespace    https://github.com/RomainTho/AMQ-scripts
 // @version      1.0
-// @description  Automatically manages low accuracy songs in local storage based on accuracy thresholds.
+// @description  Automatically manages low Guess Rate songs in local storage based on Guess Rate thresholds.
 // @match        https://animemusicquiz.com/*
 // @grant        none
 // @require      https://github.com/joske2865/AMQ-Scripts/raw/master/common/amqScriptInfo.js
@@ -13,8 +13,8 @@ if (window.quiz) {
     setup();
 }
 function setup() {
-    if (!localStorage.getItem('lowAccuracySongs')) {
-        localStorage.setItem('lowAccuracySongs', JSON.stringify([]));
+    if (!localStorage.getItem('lowGuessRateSongs')) {
+        localStorage.setItem('lowGuessRateSongs', JSON.stringify([]));
     }
 
     const l = new Listener("answer results");
@@ -42,7 +42,7 @@ function setup() {
             lastPlayed: Date.now()
         };
 
-        // Calculate the accuracy ratio
+        // Calculate the Guess Rate ratio
         let validPlayCount = current.count - current.spectatorCount;
         let correctRatio = validPlayCount > 0 ? (current.correctCount / validPlayCount) * 100 : 100;
 
@@ -52,35 +52,35 @@ function setup() {
                 let animeName = document.querySelector('#qpAnimeName')?.textContent.trim();
 
                 if (songName && animeName) {
-                    let lowAccuracySongs = JSON.parse(localStorage.getItem('lowAccuracySongs')) || [];
+                    let lowGuessRateSongs = JSON.parse(localStorage.getItem('lowGuessRateSongs')) || [];
 
                     // Check if the song is already in the list
-                    const songIndex = lowAccuracySongs.findIndex(song => song.webm === webm);
+                    const songIndex = lowGuessRateSongs.findIndex(song => song.webm === webm);
 
                     if (songIndex === -1) {
                         // Add new song if not already present
-                        lowAccuracySongs.push({
+                        lowGuessRateSongs.push({
                             songName,
                             animeName,
                             playCount: current.count,
                             correctCount: current.correctCount,
                             webm // Store the unique identifier
                         });
-                        localStorage.setItem('lowAccuracySongs', JSON.stringify(lowAccuracySongs));
-                        gameChat.systemMessage("Low accuracy song added: " + songName + " - " + animeName + " (" + current.correctCount + "/" + validPlayCount + ")");
+                        localStorage.setItem('lowGuessRateSongs', JSON.stringify(lowGuessRateSongs));
+                        gameChat.systemMessage("Low Guess Rate song added: " + songName + " - " + animeName + " (" + current.correctCount + "/" + validPlayCount + ")");
                     }
                 }
             }, 1000); // Wait 1 second
         } else if (correctRatio > 33.33 && validPlayCount >= 3) {
-            // Remove song if accuracy improves above threshold
-            let lowAccuracySongs = JSON.parse(localStorage.getItem('lowAccuracySongs')) || [];
+            // Remove song if Guess Rate improves above threshold
+            let lowGuessRateSongs = JSON.parse(localStorage.getItem('lowGuess RateSongs')) || [];
 
             if (songName && animeName) {
-                const songIndex = lowAccuracySongs.findIndex(song => song.webm === webm);
+                const songIndex = lowGuessRateSongs.findIndex(song => song.webm === webm);
                 if (songIndex !== -1) {
-                    lowAccuracySongs.splice(songIndex, 1);
-                    localStorage.setItem('lowAccuracySongs', JSON.stringify(lowAccuracySongs));
-                    gameChat.systemMessage("Low accuracy song removed due to improved accuracy: " + songName + " - " + animeName);
+                    lowGuessRateSongs.splice(songIndex, 1);
+                    localStorage.setItem('lowGuess RateSongs', JSON.stringify(lowGuessRateSongs));
+                    gameChat.systemMessage("Low Guess Rate song removed due to improved Guess Rate: " + songName + " - " + animeName);
                 }
             }
         }
