@@ -12,7 +12,6 @@
 if (window.quiz) {
     setup();
 }
-
 function setup() {
     if (!localStorage.getItem('lowAccuracySongs')) {
         localStorage.setItem('lowAccuracySongs', JSON.stringify([]));
@@ -20,6 +19,7 @@ function setup() {
 
     const l = new Listener("answer results");
     l.callback = async (data) => {
+        // Use a unique identifier if available
         const webm = data.songInfo.videoTargetMap?.catbox?.[720]?.slice(0, 6) ??
                      data.songInfo.videoTargetMap?.catbox?.[480]?.slice(0, 6) ??
                      data.songInfo.uniqueID; // Fallback to unique ID if available
@@ -27,14 +27,15 @@ function setup() {
 
         const songHistory = JSON.parse(localStorage.getItem('songHistory')) || {};
         const current = songHistory[webm] ?? { count: 0, correctCount: 0, spectatorCount: 0, lastPlayed: 0 };
+        current.count++;
 
-   
         let isCorrect;
         if (quiz.gameMode === "Nexus") {
             isCorrect = data.players[0]?.correct;
         } else {
             isCorrect = quiz.isSpectator ? false : data.players.find(player => player.gamePlayerId === quiz.ownGamePlayerId)?.correct;
         }
+        current.correctCount += isCorrect;
         current.spectatorCount += quiz.isSpectator;
         songHistory[webm] = {
             count: current.count,
@@ -89,3 +90,4 @@ function setup() {
     };
     l.bindListener();
 }
+
