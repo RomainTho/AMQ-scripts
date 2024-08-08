@@ -3,7 +3,6 @@
 // @namespace    https://github.com/RomainTho/AMQ-scripts
 // @version      1.0
 // @description  Automatically manages low accuracy songs in local storage based on accuracy thresholds.
-// @author       RomainTho
 // @match        https://animemusicquiz.com/*
 // @grant        none
 // @require      https://github.com/joske2865/AMQ-Scripts/raw/master/common/amqScriptInfo.js
@@ -36,7 +35,6 @@ function setup() {
         } else {
             isCorrect = quiz.isSpectator ? false : data.players.find(player => player.gamePlayerId === quiz.ownGamePlayerId)?.correct;
         }
-        current.correctCount = isCorrect;
         current.spectatorCount += quiz.isSpectator;
         songHistory[webm] = {
             count: current.count,
