@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         AMQ Low Accuracy Songs Manager
+// @name         AMQ Low Guess Rate Songs Manager
 // @namespace    https://github.com/RomainTho/AMQ-scripts
 // @version      1.1
-// @description  Manage low Accuracy songs by number with a simple interface.
+// @description  Manage low Guess Rate songs by number with a simple interface.
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqWindows.js
 // @author       RomainTho
@@ -24,11 +24,11 @@ let loadInterval = setInterval(() => {
     }
 }, 500);
 
-let songs = JSON.parse(localStorage.getItem("lowAccuracySongs")) || [];
+let songs = JSON.parse(localStorage.getItem("lowGuessRateSongs")) || [];
 
 // Refreshes the song data from local storage
 function refreshSongs() {
-    songs = JSON.parse(localStorage.getItem("lowAccuracySongs")) || [];
+    songs = JSON.parse(localStorage.getItem("lowGuessRateSongs")) || [];
 }
 
 // Shows all songs in the chat
@@ -39,7 +39,7 @@ function showAllSongs() {
     }
 
     let message = "----------------------<br>";
-    message += "Low Accuracy Songs:<br>";
+    message += "Low Guess Rate Songs:<br>";
     songs.forEach((song, index) => {
         message += `${index + 1}- ${song.songName} - ${song.animeName} (${song.correctCount}/${song.playCount})<br>`;
     });
@@ -61,7 +61,7 @@ function deleteSongByNumber(number) {
     }
 
     songs.splice(number - 1, 1); // Remove song at the specified index
-    localStorage.setItem("lowAccuracySongs", JSON.stringify(songs));
+    localStorage.setItem("lowGuessRateSongs", JSON.stringify(songs));
     gameChat.systemMessage("Song number " + number + " deleted.");
 }
 
@@ -71,7 +71,7 @@ let managerWindow;
 function createSongsManagerWindow() {
     managerWindow = new AMQWindow({
         id: "songsManagerWindow",
-        title: "Low Accuracy Songs Manager",
+        title: "Low Guess Rate Songs Manager",
         width: 400, // Adjusted width
         height: 300, // Adjusted height
         zIndex: 1054,
@@ -148,7 +148,7 @@ $("#qpOptionContainer > div").append($(`<div id="qpasScript" class="clickAble qp
     }
   })
   .popover({
-    content: "Low Accuracy Songs Manager",
+    content: "Low GuessRate Songs Manager",
     trigger: "hover",
     placement: "bottom"
   })
