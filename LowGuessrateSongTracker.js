@@ -27,7 +27,6 @@ function setup() {
 
         const songHistory = JSON.parse(localStorage.getItem('songHistory')) || {};
         const current = songHistory[webm] ?? { count: 0, correctCount: 0, spectatorCount: 0, lastPlayed: 0 };
-        current.count++;
 
         let isCorrect;
         if (quiz.gameMode === "Nexus") {
@@ -35,7 +34,6 @@ function setup() {
         } else {
             isCorrect = quiz.isSpectator ? false : data.players.find(player => player.gamePlayerId === quiz.ownGamePlayerId)?.correct;
         }
-        current.correctCount += isCorrect;
         current.spectatorCount += quiz.isSpectator;
         songHistory[webm] = {
             count: current.count,
@@ -43,7 +41,6 @@ function setup() {
             spectatorCount: current.spectatorCount,
             lastPlayed: Date.now()
         };
-        localStorage.setItem('songHistory', JSON.stringify(songHistory));
 
         // Calculate the accuracy ratio
         let validPlayCount = current.count - current.spectatorCount;
