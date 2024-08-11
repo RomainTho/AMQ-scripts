@@ -46,7 +46,7 @@ function setup() {
         let validPlayCount = current.count - current.spectatorCount;
         let correctRatio = validPlayCount > 0 ? (current.correctCount / validPlayCount) * 100 : 100;
 
-        if (correctRatio <= 34 && validPlayCount >= 3 && isCorrect !== undefined) {
+        if (correctRatio <= 34 && validPlayCount >= 5 && isCorrect !== undefined) {
             setTimeout(() => {
                 let songName = document.querySelector('#qpSongName')?.textContent.trim();
                 let animeName = document.querySelector('#qpAnimeName')?.textContent.trim();
@@ -84,7 +84,7 @@ function setup() {
                 }
             }
             }, 1000); // Wait 1 second
-        } else if (correctRatio > 34 && validPlayCount >= 3) {
+        } else if (correctRatio > 34 && validPlayCount >= 5) {
             // Remove song if Guess Rate improves above threshold
             let lowGuessRateSongs = JSON.parse(localStorage.getItem('lowGuess RateSongs')) || [];
 
