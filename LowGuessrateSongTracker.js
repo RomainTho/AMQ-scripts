@@ -46,10 +46,11 @@ function setup() {
         let validPlayCount = current.count - current.spectatorCount;
         let correctRatio = validPlayCount > 0 ? (current.correctCount / validPlayCount) * 100 : 100;
 
-        if (correctRatio <= 33.33 && validPlayCount >= 3) {
+        if (correctRatio <= 34 && validPlayCount >= 5 && isCorrect !== undefined) {
             setTimeout(() => {
                 let songName = document.querySelector('#qpSongName')?.textContent.trim();
                 let animeName = document.querySelector('#qpAnimeName')?.textContent.trim();
+                console.log("songName" + songName,"AnimeName" + animeName);
 
                 if (songName && animeName) {
                     let lowGuessRateSongs = JSON.parse(localStorage.getItem('lowGuessRateSongs')) || [];
@@ -69,9 +70,21 @@ function setup() {
                         localStorage.setItem('lowGuessRateSongs', JSON.stringify(lowGuessRateSongs));
                         gameChat.systemMessage("Low Guess Rate song added: " + songName + " - " + animeName + " (" + current.correctCount + "/" + validPlayCount + ")");
                     }
+                    //update the song if it is already present
+                    else {
+                        lowGuessRateSongs[songIndex] = {
+                            songName,
+                            animeName,
+                            playCount: current.count,
+                            correctCount: current.correctCount,
+                            webm // Store the unique identifier
+                        };
+                        localStorage.setItem('lowGuessRateSongs', JSON.stringify(lowGuessRateSongs));
+                        gameChat.systemMessage("Low Guess Rate song updated: " + songName + " - " + animeName + " (" + current.correctCount + "/" + validPlayCount + ")");
                 }
+            }
             }, 1000); // Wait 1 second
-        } else if (correctRatio > 33.33 && validPlayCount >= 3) {
+        } else if (correctRatio > 34 && validPlayCount >= 5) {
             // Remove song if Guess Rate improves above threshold
             let lowGuessRateSongs = JSON.parse(localStorage.getItem('lowGuess RateSongs')) || [];
 
