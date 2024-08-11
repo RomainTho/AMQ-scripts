@@ -6,11 +6,9 @@ from typing import List
 from pathlib import Path
 import requests
 
-# Assurez-vous que la sortie standard utilise l'encodage UTF-8
 if sys.version_info >= (3, 7):
     sys.stdout.reconfigure(encoding='utf-8')
 
-# Hacky workaround to fetch an external dependency
 try:
     import requests
 except ModuleNotFoundError:
@@ -22,7 +20,6 @@ def extract_info(filepath: str, lang: str='romaji') -> List:
     with open(filepath, mode='r', encoding='utf_8') as export:
         songlist = json.load(export)
     for song in songlist:
-        # Vérification que les clés existent
         if 'animeRomajiName' not in song or 'songName' not in song or 'songType' not in song or 'audio' not in song or 'songArtist' not in song:
             print(f"Song data missing keys: {song}")
             continue
@@ -50,14 +47,12 @@ def download(url: str, filename: str, force_replace: bool=False) -> bool:
     return True
 
 illegals = ['<', '>', ':', '"', '|', '?', '*']
-# Set some sane default values
 replace = False
 lang = 'romaji'
 path = './'
 infile = "merged.json"
 verbose = False
 
-# Use some butcher-style argument parsing. sys.argv[0] is this script, ignore that
 args = sys.argv[1:]
 if 'help' in args:
     print("Please tell me you didn't name a file or folder 'help', or you'd be a big baka!")
@@ -74,20 +69,18 @@ for arg in args:
 if not path.endswith('/'):
     path += "/"
 
-# Get the directory of the current script
 script_dir = os.path.dirname(os.path.abspath(__file__))
 print(f"Script directory: {script_dir}")
 
-# Construct the full path to the infile
 infile_path = os.path.join(script_dir, infile)
 print(f"Looking for infile at: {infile_path}")
 
-# Ensure the path exists
+
 if not Path(infile_path).exists():
     print(f"Error: The file '{infile_path}' does not exist.")
     sys.exit(1)
 
-# Create the path if it's not there yet
+
 Path(path).mkdir(parents=True, exist_ok=True)
 
 try:
