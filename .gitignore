@@ -1,0 +1,5 @@
+# Ignore the Exported Songs directory
+Export\ amq/Exported\ Songs/
+
+# Ignore the merged.json file
+Export\ amq/merged.json

@@ -1,35 +1,36 @@
-from mutagen.id3 import ID3, TIT2
-from pathlib import Path
+import os
+from mutagen.id3 import ID3, ID3NoHeaderError, TIT2, TPE1
 
-def rename_mp3_metadata(directory: str):
-    # Vérifie que le répertoire existe
-    if not Path(directory).is_dir():
-        print(f"Le répertoire spécifié n'existe pas : {directory}")
-        return
+def rename_mp3_metadata(directory):
+    for filename in os.listdir(directory):
+        if filename.endswith('.mp3'):
+            filepath = os.path.join(directory, filename)
+            try:
+                # Load the ID3 tag
+                audio = ID3(filepath)
+            except ID3NoHeaderError:
+                # If no ID3 header is found, create a new ID3 tag
+                audio = ID3()
 
-    # Liste tous les fichiers .mp3 dans le répertoire spécifié
-    mp3_files = list(Path(directory).glob("*.mp3"))
-    if not mp3_files:
-        print("Aucun fichier MP3 trouvé dans le répertoire.")
-        return
+            # Split the filename to extract the metadata
+            parts = filename.rsplit('-', 3)
+            if len(parts) == 4:
+                anime, track_number, song_name, artist = parts
+                artist = artist.replace('.mp3', '')  # Remove the file extension
 
-    for filepath in mp3_files:
-        print(f"Traitement du fichier : {filepath}")  # Affiche le fichier en cours de traitement
+                # Format the title as "Anime-Number-Song Name"
+                title = f"{anime}-{track_number}-{song_name}"
 
-        # Récupère le nom du fichier sans l'extension
-        new_title = filepath.stem
+                # Set the ID3 metadata
+                audio['TIT2'] = TIT2(encoding=3, text=title)
+                audio['TPE1'] = TPE1(encoding=3, text=artist)
 
-        # Charge le fichier MP3 avec mutagen
-        try:
-            audio = ID3(filepath)
-        except ID3.NoHeaderError:
-            audio = ID3()
+                # Save the updated metadata back to the file
+                audio.save(filepath)
+                print(f"Updated metadata for: {filename}")
+            else:
+                print(f"Skipping file with unexpected format: {filename}")
 
-        # Met à jour le titre de la chanson avec le nom du fichier
-        audio[TIT2] = TIT2(encoding=3, text=new_title)
-        audio.save()
-        print(f"Metadonnées mises à jour pour : {filepath}")
-
-# Spécifie le répertoire où se trouvent les fichiers MP3
-directory = r"C:\Users\scorv\OneDrive\Bureau\Anime songs\Uta no prince 1000%"
+# Directory containing your MP3 files
+directory = r"C:\Users\scorv\OneDrive\Bureau\AMQ-scripts\Export amq\Exported Songs"
 rename_mp3_metadata(directory)

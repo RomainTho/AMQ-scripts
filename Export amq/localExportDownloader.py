@@ -17,7 +17,7 @@ except ModuleNotFoundError:
     subprocess.Popen(["python", "-m", "pip", "install", "-U", 'requests']).wait()
     import requests
 
-def extract_info(filepath: str, lang: str='romaji') -> List:
+def extract_info(filepath: str, lang: str='romaji') -> List[dict]:
     songs = []
     with open(filepath, mode='r', encoding='utf_8') as export:
         songlist = json.load(export)
@@ -28,7 +28,7 @@ def extract_info(filepath: str, lang: str='romaji') -> List:
             continue
         
         # Choose the best available source: audio, video720, video480
-        url = song['audio'] or song['video720'] or song['video480']
+        url = song.get('audio') or song.get('video720') or song.get('video480')
         if url is None:
             print(f"Warning: Skipping song '{song['songName']}' by '{song['songArtist']}' due to missing URLs.")
             continue
@@ -114,17 +114,23 @@ Path(path).mkdir(parents=True, exist_ok=True)
 songs_to_download = extract_info(filepath=infile_path, lang=lang)
 total_songs = len(songs_to_download)
 
+if not isinstance(total_songs, int):
+    print(f"Error: total_songs should be an integer, but got {type(total_songs).__name__}.")
+    sys.exit(1)
+
 try:
-    for i, song in enumerate(songs_to_download):
+    for idx, song in enumerate(songs_to_download):
         outfile = f"{song['anime']}-{song['type']}-{song['title']}-{song['artist']}.mp3"
-        for i in illegals:
-            outfile = outfile.replace(i, "_")
+        for illegal_char in illegals:
+            outfile = outfile.replace(illegal_char, "_")
         outfile = f"{path}{outfile}"
         
         # Determine if we need to extract audio from a video file
         extract_audio = song['url'].endswith('.webm')
         if download(url=song['url'], filename=outfile, force_replace=replace, extract_audio=extract_audio):
-            remaining_songs = total_songs - (i + 1)
+        
+
+            remaining_songs = total_songs - (idx + 1)
             print(f"Successfully downloaded '{os.path.basename(outfile)}'. Remaining songs to download: {remaining_songs}")
 except FileNotFoundError as e:
     print(f"Error: {e}")
