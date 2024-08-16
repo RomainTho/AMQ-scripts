@@ -27,9 +27,9 @@ Script mainly used for no dropdown game mod that allows you to write special cha
 
 Does not work in Song/artist room for now.
 
-## Local Export Download
+## Export AMQ folder
 
-Local script to run on your prefered IDE to download songs from a Json made by kempanator's script : https://github.com/kempanator/amq-scripts/blob/main/amqCustomSongListGame.user.js
+Contains a Local Export Download script to run on your prefered IDE to download songs from a Json made by kempanator's script : https://github.com/kempanator/amq-scripts/blob/main/amqCustomSongListGame.user.js
 
 Run the code with a "merge.json" in the same folder to download your songs.
 
