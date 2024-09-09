@@ -37,8 +37,10 @@ def extract_info(filepath: str, lang: str='romaji') -> List[dict]:
         if not url.startswith(('http://', 'https://')):
             url = f"https://files.catbox.moe/{url}"
         
+        max_length = 100  # Limit for each field
+        
         name = song['songName'].replace('/', '_').replace('\\', '_').replace('-', '_')
-        artist = song['songArtist'].replace('/', '_').replace('\\', '_').replace('-', '_')
+        artist = song['songArtist'].replace('/', '_').replace('\\', '_').replace('-', '_')[:max_length]
         anime = song['animeRomajiName'].replace('/', '_').replace('\\', '_').replace('-', '_')
         stype = song['songType']
         
