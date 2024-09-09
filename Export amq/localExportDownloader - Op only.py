@@ -6,7 +6,7 @@ from typing import List
 from pathlib import Path
 import requests
 
-# Assurez-vous que la sortie standard utilise l'encodage UTF-8
+# Ensure stdout uses UTF-8 encoding (for Python >= 3.7)
 if sys.version_info >= (3, 7):
     sys.stdout.reconfigure(encoding='utf-8')
 
@@ -26,6 +26,10 @@ def extract_info(filepath: str, lang: str='romaji') -> List[dict]:
         if not all(key in song for key in required_keys):
             print(f"Song data missing keys: {song}")
             continue
+
+        # Only process songs where songType is 1
+        if song['songType'] != 1:
+            continue
         
         # Choose the best available source: audio, video720, video480
         url = song.get('audio') or song.get('video720') or song.get('video480')
@@ -33,9 +37,13 @@ def extract_info(filepath: str, lang: str='romaji') -> List[dict]:
             print(f"Warning: Skipping song '{song['songName']}' by '{song['songArtist']}' due to missing URLs.")
             continue
         
-        name = song['songName'].replace('/', '_').replace('\\', '_')
-        artist = song['songArtist'].replace('/', '_').replace('\\', '_')
-        anime = song['animeRomajiName'].replace('/', '_').replace('\\', '_')
+        # Handle missing schema in URLs by appending Catbox URL
+        if not url.startswith(('http://', 'https://')):
+            url = f"https://files.catbox.moe/{url}"
+        
+        name = song['songName'].replace('/', '_').replace('\\', '_').replace('-', '_')
+        artist = song['songArtist'].replace('/', '_').replace('\\', '_').replace('-', '_')
+        anime = song['animeRomajiName'].replace('/', '_').replace('\\', '_').replace('-', '_')
         stype = song['songType']
         
         s = {'title': name, 'artist': artist, 'anime': anime, 'type': stype, 'url': url}
@@ -74,7 +82,7 @@ def download(url: str, filename: str, force_replace: bool=False, extract_audio: 
     
     return True
 
-illegals = ['<', '>', ':', '"', '|', '?', '*']
+illegals = ['<', '>', ':', '"', '|', '?', '*']  # Include '-' in the illegal characters list
 # Set some sane default values
 replace = False
 lang = 'romaji'
@@ -128,8 +136,6 @@ try:
         # Determine if we need to extract audio from a video file
         extract_audio = song['url'].endswith('.webm')
         if download(url=song['url'], filename=outfile, force_replace=replace, extract_audio=extract_audio):
-        
-
             remaining_songs = total_songs - (idx + 1)
             print(f"Successfully downloaded '{os.path.basename(outfile)}'. Remaining songs to download: {remaining_songs}")
 except FileNotFoundError as e:
