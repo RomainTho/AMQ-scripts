@@ -77,6 +77,8 @@ def download(url: str, filename: str, force_replace: bool=False, extract_audio: 
         print(f"File '{filename}' already exists. Skipping download.")
         return False
     
+    
+
     try:
         if extract_audio:
             # Download the video first if extracting audio is needed
@@ -161,6 +163,11 @@ try:
             outfile = outfile.replace(illegal_char, "_")
         outfile = f"{path}{outfile}"
         
+          # Skip if a file containing the song name already exists in the directory
+        if any(song['title'] in f.name for f in Path(path).glob('*.mp3')): 
+            print(f"File with song name '{song['title']}' already exists. Skipping download.")
+            continue    
+
         # Determine if we need to extract audio from a video file
         extract_audio = song['url'].endswith('.webm')
         if download(url=song['url'], filename=outfile, force_replace=replace, extract_audio=extract_audio):
