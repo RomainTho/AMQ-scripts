@@ -5,6 +5,8 @@ import subprocess
 from typing import List
 from pathlib import Path
 import requests
+from mutagen.mp3 import MP3
+from mutagen.id3 import ID3, ID3NoHeaderError
 
 # Ensure stdout uses UTF-8 encoding (for Python >= 3.7)
 if sys.version_info >= (3, 7):
@@ -17,12 +19,28 @@ except ModuleNotFoundError:
     subprocess.Popen(["python", "-m", "pip", "install", "-U", 'requests']).wait()
     import requests
 
-def extract_info(filepath: str, lang: str='romaji') -> List[dict]:
+def url_check(url: str) -> str:
+    """
+    Checks if the formed URL with 'files.catbox.moe' works.
+    If not, switches to 'vhdist1.catbox.video'.
+    """
+    try:
+        response = requests.head(url, allow_redirects=True)
+        if response.status_code == 200:
+            return url  # URL is valid, return it
+        else:
+            # If the first URL doesn't work, switch to the vhdist URL
+            return url.replace('files.catbox.moe', 'vhdist1.catbox.video')
+    except requests.RequestException:
+        # In case of a connection error or any exception, switch to the vhdist URL
+        return url.replace('files.catbox.moe', 'vhdist1.catbox.video')
+
+def extract_info(filepath: str, lang: str='english') -> List[dict]:
     songs = []
     with open(filepath, mode='r', encoding='utf_8') as export:
         songlist = json.load(export)
     for song in songlist:
-        required_keys = ['animeRomajiName', 'songName', 'songType', 'songArtist']
+        required_keys = ['animeEnglishName', 'songName', 'songType', 'songArtist']
         if not all(key in song for key in required_keys):
             print(f"Song data missing keys: {song}")
             continue
@@ -33,15 +51,18 @@ def extract_info(filepath: str, lang: str='romaji') -> List[dict]:
             print(f"Warning: Skipping song '{song['songName']}' by '{song['songArtist']}' due to missing URLs.")
             continue
         
-        # Handle missing schema in URLs by appending Catbox URL
+        # Ensure the URL starts with a valid schema
         if not url.startswith(('http://', 'https://')):
             url = f"https://files.catbox.moe/{url}"
+        
+        # Check if the Catbox URL is reachable, otherwise switch to vhdist1
+        url = url_check(url)
         
         max_length = 100  # Limit for each field
         
         name = song['songName'].replace('/', '_').replace('\\', '_').replace('-', '_')
         artist = song['songArtist'].replace('/', '_').replace('\\', '_').replace('-', '_')[:max_length]
-        anime = song['animeRomajiName'].replace('/', '_').replace('\\', '_').replace('-', '_')
+        anime = song['animeEnglishName'].replace('/', '_').replace('\\', '_').replace('-', '_')
         stype = song['songType']
         
         s = {'title': name, 'artist': artist, 'anime': anime, 'type': stype, 'url': url}
@@ -53,37 +74,46 @@ def download(url: str, filename: str, force_replace: bool=False, extract_audio: 
         return False
     
     if Path(filename).exists() and not force_replace:
+        print(f"File '{filename}' already exists. Skipping download.")
         return False
     
-    if extract_audio:
-        # Download the video first if extracting audio is needed
-        video_filename = filename.replace('.mp3', '.webm')
-        stream = requests.get(url, stream=True)
-        with open(video_filename, "wb") as file:
-            for chunk in stream.iter_content(chunk_size=320):
-                file.write(chunk)
-        
-        # Extract the audio using ffmpeg
-        ffmpeg_command = [
-            'ffmpeg', '-i', video_filename, '-vn', '-acodec', 'mp3', filename
-        ]
-        subprocess.run(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        
-        # Remove the video file after extracting the audio
-        os.remove(video_filename)
-    else:
-        # Directly download the audio
-        stream = requests.get(url, stream=True)
-        with open(filename, "wb") as file:
-            for chunk in stream.iter_content(chunk_size=320):
-                file.write(chunk)
+    try:
+        if extract_audio:
+            # Download the video first if extracting audio is needed
+            video_filename = filename.replace('.mp3', '.webm')
+            stream = requests.get(url, stream=True)
+            with open(video_filename, "wb") as file:
+                for chunk in stream.iter_content(chunk_size=320):
+                    file.write(chunk)
+            
+            # Extract the audio using ffmpeg
+            ffmpeg_command = [
+                'ffmpeg', '-i', video_filename, '-vn', '-acodec', 'mp3', filename
+            ]
+            subprocess.run(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            
+            # Remove the video file after extracting the audio
+            os.remove(video_filename)
+        else:
+            # Directly download the audio
+            stream = requests.get(url, stream=True)
+            if stream.status_code == 200:
+                with open(filename, "wb") as file:
+                    for chunk in stream.iter_content(chunk_size=320):
+                        file.write(chunk)
+            else:
+                print(f"Failed to download {url}. HTTP Status Code: {stream.status_code}")
+                return False
+    except Exception as e:
+        print(f"Error occurred during download: {e}")
+        return False
     
     return True
 
-illegals = ['<', '>', ':', '"', '|', '?', '*', '-']  # Include '-' in the illegal characters list
+illegals = ['<', '>', ':', '"', '|', '?', '*']
 # Set some sane default values
 replace = False
-lang = 'romaji'
+lang = 'english'
 path = './Exported Songs/'
 infile = "merged.json"
 
@@ -139,4 +169,8 @@ try:
 except FileNotFoundError as e:
     print(f"Error: {e}")
 
-print("That should be all of the songs unless some weren't uploaded as mp3. Cya!")
+
+# Directory containing your MP3 files
+directory = r"./Exported Songs/"
+
+print("That should be all of the songs. Cya!")
