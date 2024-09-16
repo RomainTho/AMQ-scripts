@@ -1,5 +1,9 @@
 import os
 from mutagen.id3 import ID3, ID3NoHeaderError, TIT2, TPE1
+import sys
+
+# Ensure stdout uses UTF-8 encoding
+sys.stdout.reconfigure(encoding='utf-8')
 
 def rename_mp3_metadata(directory):
     for filename in os.listdir(directory):
