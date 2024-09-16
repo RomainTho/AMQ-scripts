@@ -1,6 +1,10 @@
 import os
 import json
 from pathlib import Path
+import sys
+
+# Ensure stdout uses UTF-8 encoding
+sys.stdout.reconfigure(encoding='utf-8')
 
 def load_anime_names(json_file):
     """
