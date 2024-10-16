@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name         AMQ Low Guess Rate Songs Manager
 // @namespace    https://github.com/RomainTho/AMQ-scripts
-// @version      1.2
-// @description  Manage low Guess Rate songs by number with a simple interface.
+// @version      1.3
+// @description  Manage low Guess Rate songs by number with a simple interface and download list as .txt file.
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqWindows.js
 // @author       RomainTho
@@ -79,6 +79,32 @@ function deleteLastSong() {
     gameChat.systemMessage("Last song deleted.");
 }
 
+// Function to generate the song list as a downloadable text file
+function downloadSongListAsTxt() {
+    if (songs.length === 0) {
+        gameChat.systemMessage("No songs found.");
+        return;
+    }
+
+    let songText = "Low Guess Rate Songs:\n";
+    songs.forEach((song, index) => {
+        songText += `${index + 1}- ${song.songName} - ${song.animeName} (${song.correctCount}/${song.playCount})\n`;
+    });
+
+    // Create a Blob from the text
+    const blob = new Blob([songText], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+
+    // Create a temporary download link and click it
+    const downloadLink = document.createElement('a');
+    downloadLink.href = url;
+    downloadLink.download = 'Low_Guess_Rate_Songs.txt'; // The file name
+    downloadLink.click();
+
+    // Revoke the object URL to release memory
+    URL.revokeObjectURL(url);
+}
+
 let managerWindow;
 
 // Creates the manager window for the UI
@@ -87,7 +113,7 @@ function createSongsManagerWindow() {
         id: "songsManagerWindow",
         title: "Low Guess Rate Songs Manager",
         width: 400, // Adjusted width
-        height: 340, // Increased height to fit new button
+        height: 380, // Increased height to fit new button
         zIndex: 1054,
         draggable: true
     });
@@ -136,6 +162,17 @@ function createSongsManagerWindow() {
         id: "showButton"
     });
 
+    managerWindow.addPanel({
+        width: 1.0,
+        height: 40, // Increased height for the download button
+        zIndex: 1059,
+        position: {
+            x: 0,
+            y: 225,
+        },
+        id: "downloadButton"
+    });
+
     managerWindow.panels[0].panel.append(
         $(`<div id="songNumberToDeleteTextBox"></div>`)
         .append($(`<input id="songNumberToDeleteText" type="number" placeholder="Song Number to Delete">`))
@@ -165,6 +202,15 @@ function createSongsManagerWindow() {
         .append(
             $(`<button id="showButton" class="btn btn-primary">Show All Songs</button>`).click(function () {
                 updateUI(); // Show updated list
+            })
+        )
+    );
+
+    managerWindow.panels[4].panel.append(
+        $(`<div id="downloadButton"></div>`)
+        .append(
+            $(`<button id="downloadButton" class="btn btn-primary">Download Songs as .txt</button>`).click(function () {
+                downloadSongListAsTxt();
             })
         )
     );
@@ -209,23 +255,26 @@ AMQ_addStyle(`
         border: #2E2E2E;
         font-size: 14px; /* Text size */
     }
-    #deleteButton, #deleteLastButton, #showButton {
+    #deleteButton, #deleteLastButton, #showButton, #downloadButton {
         width: 350px; /* Adjusted width */
         text-align: center;
     }
-    #deleteButton > button, #deleteLastButton > button, #showButton > button {
+    #deleteButton > button, #deleteLastButton > button, #showButton > button, #downloadButton > button {
         text-align: center;
         width: 90%;
         margin: 5px 15px;
         font-size: 14px;
     }
     #deleteButton > button {
-        background-color: #FF0000; /* Button color */
+        background-color: #FF0000; /* Red button for delete */
     }
     #deleteLastButton > button {
-        background-color: #FF4500; /* Button color */
+        background-color: #FF4500; /* Orange button for delete last */
     }
     #showButton > button {
-        background-color: #70AAE5; /* Button color */
+        background-color: #70AAE5; /* Blue button for showing songs */
+    }
+    #downloadButton > button {
+        background-color: #32CD32; /* Light green button for download */
     }
 `);
