@@ -1,5 +1,11 @@
-# Ignore the Exported Songs directory
-Export\ amq/Exported\ Songs/
+# Ignorer le fichier Low_Guess_Rate_Songs.txt
+Low Guess rate export/Low_Guess_Rate_Songs.txt
 
-# Ignore the merged.json file
-Export\ amq/merged.json
+# Ignorer le dossier Low guess rate Const songs
+Low Guess rate export/Low guess rate Const songs/
+
+# Ignorer le fichier merged.json
+Export AMQ songs/merged.json
+
+# Ignorer le dossier Exported songs
+Export AMQ songs/Exported Songs/

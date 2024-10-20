@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Low Guess Rate Songs Manager
 // @namespace    https://github.com/RomainTho/AMQ-scripts
-// @version      1.3
+// @version      1.4
 // @description  Manage low Guess Rate songs by number with a simple interface and download list as .txt file.
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqWindows.js
@@ -81,6 +81,7 @@ function deleteLastSong() {
 
 // Function to generate the song list as a downloadable text file
 function downloadSongListAsTxt() {
+    updateUI();
     if (songs.length === 0) {
         gameChat.systemMessage("No songs found.");
         return;

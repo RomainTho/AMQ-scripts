@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         AMQ Low Guess Rate Songs Tracker
 // @namespace    https://github.com/RomainTho/AMQ-scripts
-// @version      1.0
+// @version      1.1
 // @description  Automatically manages low Guess Rate songs in local storage based on Guess Rate thresholds.
 // @match        https://animemusicquiz.com/*
 // @grant        none
@@ -85,16 +85,20 @@ function setup() {
             }
             }, 1000); // Wait 1 second
         } else if (correctRatio > 34 && validPlayCount >= 5) {
-            // Remove song if Guess Rate improves above threshold
-            let lowGuessRateSongs = JSON.parse(localStorage.getItem('lowGuess RateSongs')) || [];
+         // Remove song if Guess Rate improves above threshold
+         let lowGuessRateSongs = JSON.parse(localStorage.getItem('lowGuessRateSongs')) || [];
 
-            if (songName && animeName) {
-                const songIndex = lowGuessRateSongs.findIndex(song => song.webm === webm);
-                if (songIndex !== -1) {
-                    lowGuessRateSongs.splice(songIndex, 1);
-                    localStorage.setItem('lowGuess RateSongs', JSON.stringify(lowGuessRateSongs));
-                    gameChat.systemMessage("Low Guess Rate song removed due to improved Guess Rate: " + songName + " - " + animeName);
-                }
+        const songIndex = lowGuessRateSongs.findIndex(song => song.webm === webm);
+
+        if (songIndex !== -1) {
+        // Song found, remove it from the list
+        const songName = lowGuessRateSongs[songIndex].songName;
+        const animeName = lowGuessRateSongs[songIndex].animeName;
+
+        lowGuessRateSongs.splice(songIndex, 1);
+        localStorage.setItem('lowGuessRateSongs', JSON.stringify(lowGuessRateSongs));
+        gameChat.systemMessage("Low Guess Rate song removed due to improved Guess Rate: " + songName + " - " + animeName);
+       
             }
         }
     };
