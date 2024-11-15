@@ -36,5 +36,6 @@ def rename_mp3_metadata(directory):
                 print(f"Skipping file with unexpected format: {filename}")
 
 # Directory containing your MP3 files
-directory = r"C:\Users\scorv\OneDrive\Bureau\AMQ-scripts\Export amq\Exported Songs"
+directory = r"C:\Users\scorv\OneDrive\Bureau\AMQ-scripts\Export AMQ songs\Exported Songs"
+
 rename_mp3_metadata(directory)
