@@ -56,7 +56,7 @@ def extract_info(filepath: str, lang: str='english') -> List[dict]:
             url = f"https://files.catbox.moe/{url}"
         
         # Check if the Catbox URL is reachable, otherwise switch to vhdist1
-        url = url_check(url)
+        #url = url_check(url)
         
         max_length = 100  # Limit for each field
         
