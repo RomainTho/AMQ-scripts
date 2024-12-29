@@ -69,36 +69,38 @@ def extract_info(filepath: str, lang: str='english') -> List[dict]:
         songs.append(s)
     return songs
 
-def download(url: str, filename: str, force_replace: bool=False, extract_audio: bool=False) -> bool:
+def download(url: str, filename: str, force_replace: bool = False, extract_audio: bool = False) -> bool:
     if not url:
         return False
-    
+
     if Path(filename).exists() and not force_replace:
         print(f"File '{filename}' already exists. Skipping download.")
         return False
-    
-    
+
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
+    }
 
     try:
         if extract_audio:
             # Download the video first if extracting audio is needed
             video_filename = filename.replace('.mp3', '.webm')
-            stream = requests.get(url, stream=True)
+            stream = requests.get(url, stream=True, headers=headers)
             with open(video_filename, "wb") as file:
                 for chunk in stream.iter_content(chunk_size=320):
                     file.write(chunk)
-            
+
             # Extract the audio using ffmpeg
             ffmpeg_command = [
                 'ffmpeg', '-i', video_filename, '-vn', '-acodec', 'mp3', filename
             ]
             subprocess.run(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            
+
             # Remove the video file after extracting the audio
             os.remove(video_filename)
         else:
             # Directly download the audio
-            stream = requests.get(url, stream=True)
+            stream = requests.get(url, stream=True, headers=headers)
             if stream.status_code == 200:
                 with open(filename, "wb") as file:
                     for chunk in stream.iter_content(chunk_size=320):
@@ -109,8 +111,9 @@ def download(url: str, filename: str, force_replace: bool=False, extract_audio: 
     except Exception as e:
         print(f"Error occurred during download: {e}")
         return False
-    
+
     return True
+
 
 illegals = ['<', '>', ':', '"', '|', '?', '*']
 # Set some sane default values
