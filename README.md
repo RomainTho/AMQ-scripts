@@ -3,6 +3,29 @@ PS : To be updated later
 
 # AMQ-scripts
 
+## AMQ NGMC Guess Counter
+
+Script to count guesses per player during NGMC games in AMQ.
+
+- Parses player names and elo from a single input line like: `JuliAless64 (11.902) kiishua (10.837) janoxx (6.525) Swapin (5.629)`
+- Displays each player with a guess counter and + / - buttons to manually adjust
+- Automatically sends the current count as a string in the AMQ chat using `sendChatMessage()`
+- Includes 3 guess distribution modes:
+  - **Usual**:  
+    - ≥8.5 → 4 guesses  
+    - 4.5–8.49 → 3 guesses  
+    - 0.5–4.49 → 2 guesses  
+    - ≤0.49 → 1 guess  
+  - **Watched**:  
+    - ≥8.5 → 5 guesses  
+    - 7–8 → 4 guesses  
+    - 5.5–6.5 → 3 guesses  
+    - 3.5–5 → 2 guesses  
+    - 0–3 → 1 guess  
+  - **Custom**: set custom starting values per player manually (e.g. `4,3,3,2`)
+- Includes a **reset button** to reset all guesses to default (Reset when everyone hits 0)
+- Window accessible through the top-right icon (like other manager windows)
+
 ## Song History with local storage
 
 Script to store in your browser's local storage, the number of succesful guess, total guess and guessrate of each song you have played.
