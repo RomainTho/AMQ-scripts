@@ -9,7 +9,7 @@ Script to count guesses per player during NGMC games in AMQ.
 
 - Parses player names and elo from a single input line like: `JuliAless64 (11.902) kiishua (10.837) janoxx (6.525) Swapin (5.629)`
 - Displays each player with a guess counter and + / - buttons to manually adjust
-- Automatically sends the current count as a string in the AMQ chat using `sendChatMessage()`
+- Automatically sends the current count in the AMQ chat
 - Includes 3 guess distribution modes:
   - **Usual**:  
     - ≥8.5 → 4 guesses  
