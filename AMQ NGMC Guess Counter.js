@@ -7,7 +7,6 @@
 // @match        https://animemusicquiz.com/*
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqWindows.js
 // @require      https://raw.githubusercontent.com/TheJoseph98/AMQ-Scripts/master/common/amqScriptInfo.js
-// @updateURL    https://raw.githubusercontent.com/RomainTho/AMQ-scripts/main/AMQ_NGMC_Guess_Counter.user.js
 // @grant        none
 // ==/UserScript==
 
