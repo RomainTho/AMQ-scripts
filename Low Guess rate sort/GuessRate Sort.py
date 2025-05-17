@@ -45,5 +45,5 @@ def sort_songs_by_guess_rate(file_name):
     print(f"Sorting complete. Saved to '{output_file_name}'.")
 
 # Example usage:
-file_name = input("Enter the name of your song file in the current directory: ")
+file_name = "Low_Guess_Rate_Songs.txt"
 sort_songs_by_guess_rate(file_name)
