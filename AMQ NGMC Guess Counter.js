@@ -96,14 +96,20 @@ $("#customPanel").append(`
     });
 
     $("#resetGuesses").click(() => {
-        const total = players.length > 0 ? players.map(p => p.count).join("") : "5432";
-        if (confirm("Are you sure you want to reset even if you have more than 1 guess left?")) {
-            if (currentMode) {
-                applyGuessMode(currentMode);
-                displayCounters();
-            }
+    const totalGuesses = players.reduce((acc, p) => acc + p.count, 0);
+
+    if (totalGuesses > 1) {
+        if (!confirm("Are you sure you want to reset even if you have more than 1 guess left?")) {
+            return;
         }
-    });
+    }
+
+    if (currentMode) {
+        applyGuessMode(currentMode);
+        displayCounters();
+    }
+});
+
 
     $("#customizeGuesses").click(() => {
         const customValues = prompt("Enter custom guess values separated by commas (e.g., 4,3,2,1):");
