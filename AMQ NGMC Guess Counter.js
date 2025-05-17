@@ -209,7 +209,7 @@ let loadInterval = setInterval(() => {
 let oldWidth = $("#qpOptionContainer").width();
 $("#qpOptionContainer").width(oldWidth + 35);
 
-$("#qpOptionContainer > div").append($(`<div id="qpasScript" class="clickAble qpOption"><i aria-hidden="true" class="fa fa-calculator qpMenuItem"></i></div>`)
+$("#qpOptionContainer > div").append($(`<div id="ngmcqpasScript" class="clickAble qpOption"><i aria-hidden="true" class="fa fa-calculator qpMenuItem"></i></div>`)
   .click(() => {
     if (managerWindow.isVisible()) {
       managerWindow.close();
@@ -231,7 +231,7 @@ AMQ_addStyle(`
         background-color: #2e2e2e;
         color: #fff;
     }
-    #qpasScript {
+    #ngmcqpasScript {
         width: 27px;
         margin-right: 5px;
     }
@@ -247,7 +247,7 @@ AMQ_addStyle(`
 `);
 AMQ_addStyle(`
     /* Réduction de la taille des boutons */
-    .customWindowPanel button {
+    #ngmcWindow .customWindowPanel button {
         height: 22px !important;
         padding: 1px 4px !important;
         font-size: 12px !important;
@@ -261,17 +261,17 @@ AMQ_addStyle(`
     }
 
     /* Réduction du padding du header */
-    .customWindowHeader {
+    #ngmcWindow .customWindowHeader {
         padding: 4px 8px !important;
         height: 28px !important;
     }
 
-    .customWindowHeader .modal-title {
+    #ngmcWindow .customWindowHeader .modal-title {
         font-size: 14px !important;
         margin: 0 !important;
     }
 
-    .customWindowBody {
+    #ngmcWindow .customWindowBody {
         height: 215px !important;
         overflow-y: hidden !important;
     }
