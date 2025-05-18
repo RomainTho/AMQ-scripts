@@ -92,6 +92,12 @@ function createNGMCManagerWindow() {
         <input id="playerInput" placeholder="" style="width: 100%; height: 24px; background-color: white; color: black; border: 1px solid #ccc; border-radius: 4px; padding: 5px; box-sizing: border-box;">
     `);
 
+    $("#playerInput").on("keydown", function (event) {
+    if (event.key === "Backspace" || event.keyCode === 8) {
+        event.stopPropagation();
+    }
+});
+
     // Boutons de mode
     $("#modePanel").append(`
         <button id="setUsual" class="btn btn-info" style="width: 48%;">Usual</button>
