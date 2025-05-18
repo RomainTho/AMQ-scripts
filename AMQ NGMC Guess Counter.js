@@ -74,17 +74,17 @@ function createNGMCManagerWindow() {
         id: "ngmcWindow",
         title: "Guess Counter",
         width: 300,
-        height: 360,
+        height: 315,
         zIndex: 1054,
         draggable: true
     });
 
     // Panels
-    managerWindow.addPanel({ width: 1.0, height: 50, position: { x: 0, y: 5 }, id: "playerInputPanel" });
-    managerWindow.addPanel({ width: 1.0, height: 35, position: { x: 0, y: 35 }, id: "modePanel" });
-    managerWindow.addPanel({ width: 1.0, height: 110, position: { x: 0, y: 65 }, id: "counterPanel" });
-    managerWindow.addPanel({ width: 1.0, height: 55, position: { x: 0, y: 170 }, id: "customPanel" });
-    managerWindow.addPanel({ width: 1.0, height: 90, position: { x: 0, y: 195 }, id: "lifePanel" });
+    managerWindow.addPanel({ width: 1.0, height: 50, position: { x: 0, y: 0 }, id: "playerInputPanel" });
+    managerWindow.addPanel({ width: 1.0, height: 35, position: { x: 0, y: 30 }, id: "modePanel" });
+    managerWindow.addPanel({ width: 1.0, height: 110, position: { x: 0, y: 60 }, id: "counterPanel" });
+    managerWindow.addPanel({ width: 1.0, height: 55, position: { x: 0, y: 160 }, id: "customPanel" });
+    managerWindow.addPanel({ width: 1.0, height: 90, position: { x: 0, y: 190 }, id: "lifePanel" });
 
 
     // Zone de saisie
@@ -386,6 +386,12 @@ $("#qpOptionContainer > div").append($(`<div id="ngmcqpasScript" class="clickAbl
 
 // Style identique
 AMQ_addStyle(`
+    #ngmcWindow .customWindowBody {
+        height: 310px !important; /* Avant : 285px → maintenant : 310px */
+    }
+`);
+
+AMQ_addStyle(`
 
     #ngmcWindow {
         background-color: #2e2e2e;
@@ -441,4 +447,8 @@ AMQ_addStyle(`
         font-size: 11px !important;
         padding: 2px 4px !important;
     }
+    #ngmcWindow .customWindowBody {
+  overflow: hidden !important;
+}
+
 `);
