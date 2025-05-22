@@ -31,7 +31,7 @@ function refreshSongs() {
     songs = JSON.parse(localStorage.getItem("lowGuessRateSongs")) || [];
 }
 
-// Shows all songs in the chat
+// Shows all songs in the chat, no only last 50 :)
 function showAllSongs() {
     if (songs.length === 0) {
         gameChat.systemMessage("No songs found.");
@@ -39,13 +39,17 @@ function showAllSongs() {
     }
 
     let message = "----------------------<br>";
-    message += "Low Guess Rate Songs:<br>";
-    songs.forEach((song, index) => {
+    message += "Low Guess Rate Songs (Last 50):<br>";
+
+    const recentSongs = songs.slice(-50); // Prend les 50 dernières chansons
+    recentSongs.forEach((song, index) => {
         message += `${index + 1}- ${song.songName} - ${song.animeName} (${song.correctCount}/${song.playCount})<br>`;
     });
+
     message += "----------------------";
     gameChat.systemMessage(message);
 }
+
 
 // Updates the UI by refreshing data and then showing it
 function updateUI() {
